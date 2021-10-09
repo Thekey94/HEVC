@@ -91,13 +91,21 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
-
+  PCTR_init();
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  PCTR_SET_EV_STATE(EV_CHARGING);
   while (1)
   {
     /* USER CODE END WHILE */
 //	  PCTR_Set_Duty_Cycle(30);
+
+	  PCTR_Set_Duty_Cycle(70);
+	  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
+	  HAL_Delay(5000);
+	  PCTR_Set_Duty_Cycle(10);
+	  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
+	  HAL_Delay(5000);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -107,6 +115,7 @@ int main(void)
   * @brief System Clock Configuration
   * @retval None
   */
+volatile HAL_StatusTypeDef DebugVar_OscConfigValue;
 void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
@@ -122,8 +131,10 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
   RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL9;
-  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+  DebugVar_OscConfigValue = HAL_RCC_OscConfig(&RCC_OscInitStruct);
+  if (DebugVar_OscConfigValue != HAL_OK)
   {
+
     Error_Handler();
   }
   /** Initializes the CPU, AHB and APB buses clocks

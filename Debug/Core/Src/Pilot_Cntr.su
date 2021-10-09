@@ -1,2 +1,4 @@
-Pilot_Cntr.c:13:18:PCTR_Set_Duty_Cycle	24	static
-Pilot_Cntr.c:30:6:PCTR_PWM_Handller	8	static
+Pilot_Cntr.c:15:6:PCTR_init	8	static
+Pilot_Cntr.c:27:6:PCTR_SET_EV_STATE	16	static
+Pilot_Cntr.c:32:18:PCTR_Set_Duty_Cycle	24	static
+Pilot_Cntr.c:49:6:PCTR_PWM_Handller	8	static
