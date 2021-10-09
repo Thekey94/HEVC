@@ -139,11 +139,6 @@ HAL_TickFreqTypeDef uwTickFreq = HAL_TICK_FREQ_DEFAULT;  /* 1KHz */
   *         to have correct HAL operation.
   * @retval HAL status
   */
-volatile int DebugVar_1 = 0;
-volatile int DebugVar_2 = 0;
-volatile int DebugVar_3 = 0;
-volatile int DebugVar_4 = 0;
-volatile HAL_StatusTypeDef HAL_IntTick_return = 0x00;
 HAL_StatusTypeDef HAL_Init(void)
 {
   /* Configure Flash prefetch */
@@ -152,7 +147,6 @@ HAL_StatusTypeDef HAL_Init(void)
     defined(STM32F102x6) || defined(STM32F102xB) || \
     defined(STM32F103x6) || defined(STM32F103xB) || defined(STM32F103xE) || defined(STM32F103xG) || \
     defined(STM32F105xC) || defined(STM32F107xC)
-	DebugVar_1 = 1;
   /* Prefetch buffer is not available on value line devices */
   __HAL_FLASH_PREFETCH_BUFFER_ENABLE();
 #endif
@@ -162,7 +156,7 @@ HAL_StatusTypeDef HAL_Init(void)
   HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
 
   /* Use systick as time base source and configure 1ms tick (default clock after Reset is HSI) */
-  HAL_IntTick_return = HAL_InitTick(TICK_INT_PRIORITY);
+  HAL_InitTick(TICK_INT_PRIORITY);
 
   /* Init the low level hardware */
   HAL_MspInit();

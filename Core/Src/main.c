@@ -19,6 +19,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "Pilot_Cntr.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -96,12 +97,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-	  HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
-//	  for ( i = 0 ; i < 50000; i++)
-//	  {
-//		  j++;
-//	  }
-	  HAL_Delay(1000);
+//	  PCTR_Set_Duty_Cycle(30);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */

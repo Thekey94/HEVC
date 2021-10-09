@@ -15,8 +15,15 @@
 #define PWM_PIN			GPIO_PIN_10
 #define PWM_PIN_BANK	GPIOA
 
-void PWM_Handller(void);
+/*Data types Defines ---------------------------------------------------------*/
+typedef enum PCTR_Return_Type
+{
+	PCTR_OK,
+	PCTR_NOT_OK
+}PCTR_Return_Type;
 
+void PCTR_PWM_Handller(void);
 
+PCTR_Return_Type PCTR_Set_Duty_Cycle (uint8_t value);
 
 #endif /* INC_PILOT_CNTR_H_ */

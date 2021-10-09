@@ -5,14 +5,45 @@
  *      Author: Ahmed Ashraf
  */
 #include <Pilot_Cntr.h>
-volatile uint8_t usless_counter =0;
 
-void PWM_Handller(void)
+
+static uint8_t PCTR_Duty_Cycle = 5;
+static uint8_t PCTR_PWM_Counter;
+
+PCTR_Return_Type PCTR_Set_Duty_Cycle (uint8_t value)
 {
-	usless_counter ++;
-	if (usless_counter >= 1000)
+	PCTR_Return_Type ret_val;
+	if (value >= 0 && value <= 100)
 	{
-		HAL_GPIO_TogglePin(PWM_PIN_BANK, PWM_PIN);
-		usless_counter = 0;
+		value = PCTR_Duty_Cycle;
+		ret_val = PCTR_OK;
+	}
+	else
+	{
+		ret_val = PCTR_NOT_OK;
+	}
+
+	return(ret_val);
+}
+
+
+void PCTR_PWM_Handller(void)
+{
+	if (PCTR_PWM_Counter <= 10)
+	{
+		if (PCTR_PWM_Counter <= PCTR_Duty_Cycle)
+		{
+			HAL_GPIO_WritePin(PWM_PIN_BANK, PWM_PIN, GPIO_PIN_SET);
+			PCTR_PWM_Counter++;
+		}
+		else
+		{
+			HAL_GPIO_WritePin(PWM_PIN_BANK, PWM_PIN, GPIO_PIN_RESET);
+			PCTR_PWM_Counter++;
+		}
+	}
+	else
+	{
+		PCTR_PWM_Counter = 0;
 	}
 }

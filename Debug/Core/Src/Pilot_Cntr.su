@@ -1,1 +1,2 @@
-Pilot_Cntr.c:10:6:PWM_Handller	4	static
+Pilot_Cntr.c:13:18:PCTR_Set_Duty_Cycle	24	static
+Pilot_Cntr.c:30:6:PCTR_PWM_Handller	8	static
