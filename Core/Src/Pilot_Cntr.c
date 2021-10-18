@@ -18,8 +18,6 @@ void PCTR_init(void)
 	EV_State = EV_NOT_CONNECTED;
 	PCTR_PWM_Counter = 0;
 	PCTR_Duty_Cycle = 100;
-	/*configure Sys-tick to be 100 KHZ */
-	HAL_SYSTICK_Config(SystemCoreClock / (100000U ) );
 
 	is_PCTR_initialized = PCTR_INITIALIZED;
 }

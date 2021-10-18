@@ -12,8 +12,8 @@
 #include "stm32f1xx_hal.h"
 
 /* Private Defines -----------------------------------------------------------*/
-#define PWM_PIN			GPIO_PIN_10
-#define PWM_PIN_BANK	GPIOA
+#define PWM_PIN			GPIO_PIN_5
+#define PWM_PIN_BANK	GPIOB
 
 /*Data types Defines ---------------------------------------------------------*/
 typedef enum PCTR_Return_Type

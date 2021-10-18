@@ -147,6 +147,7 @@ HAL_StatusTypeDef HAL_Init(void)
     defined(STM32F102x6) || defined(STM32F102xB) || \
     defined(STM32F103x6) || defined(STM32F103xB) || defined(STM32F103xE) || defined(STM32F103xG) || \
     defined(STM32F105xC) || defined(STM32F107xC)
+
   /* Prefetch buffer is not available on value line devices */
   __HAL_FLASH_PREFETCH_BUFFER_ENABLE();
 #endif
@@ -369,7 +370,7 @@ HAL_TickFreqTypeDef HAL_GetTickFreq(void)
 __weak void HAL_Delay(uint32_t Delay)
 {
   uint32_t tickstart = HAL_GetTick();
-  uint32_t wait = Delay * 100; // Multiplied by 100 due to changing the Systick in PCTR_Init;
+  uint32_t wait = Delay;
 
   /* Add a freq to guarantee minimum wait */
   if (wait < HAL_MAX_DELAY)
