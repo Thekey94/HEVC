@@ -398,68 +398,69 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
  8000302:	f44f 3380 	mov.w	r3, #65536	; 0x10000
  8000306:	61fb      	str	r3, [r7, #28]
-  RCC_OscInitStruct.HSEPredivValue = RCC_HSE_PREDIV_DIV2;
- 8000308:	f44f 3300 	mov.w	r3, #131072	; 0x20000
- 800030c:	623b      	str	r3, [r7, #32]
+  RCC_OscInitStruct.HSEPredivValue = RCC_HSE_PREDIV_DIV1;
+ 8000308:	2300      	movs	r3, #0
+ 800030a:	623b      	str	r3, [r7, #32]
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
- 800030e:	2301      	movs	r3, #1
- 8000310:	62bb      	str	r3, [r7, #40]	; 0x28
+ 800030c:	2301      	movs	r3, #1
+ 800030e:	62bb      	str	r3, [r7, #40]	; 0x28
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
- 8000312:	2302      	movs	r3, #2
- 8000314:	637b      	str	r3, [r7, #52]	; 0x34
+ 8000310:	2302      	movs	r3, #2
+ 8000312:	637b      	str	r3, [r7, #52]	; 0x34
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
- 8000316:	f44f 3380 	mov.w	r3, #65536	; 0x10000
- 800031a:	63bb      	str	r3, [r7, #56]	; 0x38
+ 8000314:	f44f 3380 	mov.w	r3, #65536	; 0x10000
+ 8000318:	63bb      	str	r3, [r7, #56]	; 0x38
   RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL9;
- 800031c:	f44f 13e0 	mov.w	r3, #1835008	; 0x1c0000
- 8000320:	63fb      	str	r3, [r7, #60]	; 0x3c
+ 800031a:	f44f 13e0 	mov.w	r3, #1835008	; 0x1c0000
+ 800031e:	63fb      	str	r3, [r7, #60]	; 0x3c
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
- 8000322:	f107 0318 	add.w	r3, r7, #24
- 8000326:	4618      	mov	r0, r3
- 8000328:	f000 fcc6 	bl	8000cb8 <HAL_RCC_OscConfig>
- 800032c:	4603      	mov	r3, r0
- 800032e:	2b00      	cmp	r3, #0
- 8000330:	d001      	beq.n	8000336 <SystemClock_Config+0x5a>
+ 8000320:	f107 0318 	add.w	r3, r7, #24
+ 8000324:	4618      	mov	r0, r3
+ 8000326:	f000 fcc7 	bl	8000cb8 <HAL_RCC_OscConfig>
+ 800032a:	4603      	mov	r3, r0
+ 800032c:	2b00      	cmp	r3, #0
+ 800032e:	d001      	beq.n	8000334 <SystemClock_Config+0x58>
   {
     Error_Handler();
- 8000332:	f000 f8d5 	bl	80004e0 <Error_Handler>
+ 8000330:	f000 f8d6 	bl	80004e0 <Error_Handler>
   }
   /** Initializes the CPU, AHB and APB buses clocks
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
- 8000336:	230f      	movs	r3, #15
- 8000338:	607b      	str	r3, [r7, #4]
+ 8000334:	230f      	movs	r3, #15
+ 8000336:	607b      	str	r3, [r7, #4]
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
- 800033a:	2302      	movs	r3, #2
- 800033c:	60bb      	str	r3, [r7, #8]
+ 8000338:	2302      	movs	r3, #2
+ 800033a:	60bb      	str	r3, [r7, #8]
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
- 800033e:	2300      	movs	r3, #0
- 8000340:	60fb      	str	r3, [r7, #12]
+ 800033c:	2300      	movs	r3, #0
+ 800033e:	60fb      	str	r3, [r7, #12]
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
- 8000342:	f44f 6380 	mov.w	r3, #1024	; 0x400
- 8000346:	613b      	str	r3, [r7, #16]
+ 8000340:	f44f 6380 	mov.w	r3, #1024	; 0x400
+ 8000344:	613b      	str	r3, [r7, #16]
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
- 8000348:	2300      	movs	r3, #0
- 800034a:	617b      	str	r3, [r7, #20]
+ 8000346:	2300      	movs	r3, #0
+ 8000348:	617b      	str	r3, [r7, #20]
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK)
- 800034c:	1d3b      	adds	r3, r7, #4
- 800034e:	2101      	movs	r1, #1
- 8000350:	4618      	mov	r0, r3
- 8000352:	f000 ff31 	bl	80011b8 <HAL_RCC_ClockConfig>
- 8000356:	4603      	mov	r3, r0
- 8000358:	2b00      	cmp	r3, #0
- 800035a:	d001      	beq.n	8000360 <SystemClock_Config+0x84>
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
+ 800034a:	1d3b      	adds	r3, r7, #4
+ 800034c:	2102      	movs	r1, #2
+ 800034e:	4618      	mov	r0, r3
+ 8000350:	f000 ff32 	bl	80011b8 <HAL_RCC_ClockConfig>
+ 8000354:	4603      	mov	r3, r0
+ 8000356:	2b00      	cmp	r3, #0
+ 8000358:	d001      	beq.n	800035e <SystemClock_Config+0x82>
   {
     Error_Handler();
- 800035c:	f000 f8c0 	bl	80004e0 <Error_Handler>
+ 800035a:	f000 f8c1 	bl	80004e0 <Error_Handler>
   }
 }
- 8000360:	bf00      	nop
- 8000362:	3740      	adds	r7, #64	; 0x40
- 8000364:	46bd      	mov	sp, r7
- 8000366:	bd80      	pop	{r7, pc}
+ 800035e:	bf00      	nop
+ 8000360:	3740      	adds	r7, #64	; 0x40
+ 8000362:	46bd      	mov	sp, r7
+ 8000364:	bd80      	pop	{r7, pc}
+	...
 
 08000368 <MX_TIM1_Init>:
   * @brief TIM1 Initialization Function
@@ -504,9 +505,9 @@ static void MX_TIM1_Init(void)
  8000390:	4b1b      	ldr	r3, [pc, #108]	; (8000400 <MX_TIM1_Init+0x98>)
  8000392:	2200      	movs	r2, #0
  8000394:	609a      	str	r2, [r3, #8]
-  htim1.Init.Period = 359;
+  htim1.Init.Period = 719;
  8000396:	4b1a      	ldr	r3, [pc, #104]	; (8000400 <MX_TIM1_Init+0x98>)
- 8000398:	f240 1267 	movw	r2, #359	; 0x167
+ 8000398:	f240 22cf 	movw	r2, #719	; 0x2cf
  800039c:	60da      	str	r2, [r3, #12]
   htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
  800039e:	4b18      	ldr	r3, [pc, #96]	; (8000400 <MX_TIM1_Init+0x98>)
