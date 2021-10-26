@@ -32,6 +32,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define INDH_PERIOD		100
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -46,7 +47,9 @@ DMA_HandleTypeDef hdma_adc1;
 TIM_HandleTypeDef htim1;
 
 /* USER CODE BEGIN PV */
-uint16_t adc_data[1]; ;
+uint16_t adc_data[1];
+
+volatile uint16_t INDH_MAIN_TIMER = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -62,14 +65,60 @@ static void MX_ADC1_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+void user_pwm_setvalueCH1(uint32_t duty_percent)
+{
+    TIM_OC_InitTypeDef sConfigOC;
+    uint32_t value;
+    value = (719 * duty_percent) / 100;
+    HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_1);
+    sConfigOC.OCMode = TIM_OCMODE_PWM1;
+    sConfigOC.Pulse = value;
+    sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+    sConfigOC.OCNPolarity = TIM_OCNPOLARITY_HIGH;
+    sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+    sConfigOC.OCIdleState = TIM_OCIDLESTATE_RESET;
+    sConfigOC.OCNIdleState = TIM_OCNIDLESTATE_RESET;
+    if (HAL_TIM_PWM_ConfigChannel(&htim1, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
+    {
+      Error_Handler();
+    }
+    HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+}
+void user_pwm_setvalueCH2(uint32_t duty_percent)
+{
+    TIM_OC_InitTypeDef sConfigOC;
+    uint32_t value;
+    value = (719 * duty_percent) / 100;
+    HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_2);
+    sConfigOC.OCMode = TIM_OCMODE_PWM1;
+    sConfigOC.Pulse = value;
+    sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+    sConfigOC.OCNPolarity = TIM_OCNPOLARITY_HIGH;
+    sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+    sConfigOC.OCIdleState = TIM_OCIDLESTATE_RESET;
+    sConfigOC.OCNIdleState = TIM_OCNIDLESTATE_RESET;
+    if (HAL_TIM_PWM_ConfigChannel(&htim1, &sConfigOC, TIM_CHANNEL_2) != HAL_OK)
+    {
+      Error_Handler();
+    }
+    HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
+}
+
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-	PCTR_PWM_Handller();
+
 }
 
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 {
-	PCTR_Update_EV_State(adc_data);
+	__NOP();
+}
+
+void HAL_IncTick(void)
+{
+	uwTick += uwTickFreq;
+	INDH_MAIN_TIMER += uwTickFreq;
+
 }
 /* USER CODE END 0 */
 
@@ -106,8 +155,11 @@ int main(void)
   MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
   PCTR_init();
-  HAL_TIM_Base_Start_IT(&htim1);
+  HAL_TIM_Base_Start(&htim1);
   HAL_ADC_Start_DMA(&hadc1,(uint32_t*)adc_data,1);
+  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+  uint8_t test_var1;
+  uint8_t test_var2;
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -117,12 +169,26 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	 HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
-	 HAL_ADC_Start_DMA(&hadc1,(uint32_t*)adc_data,1);
-	 HAL_Delay(1000);
-	 HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
-	 HAL_ADC_Start_DMA(&hadc1,(uint32_t*)adc_data,1);
-	 HAL_Delay(1000);
+//	 HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
+	 HAL_Delay(100);
+	 if (INDH_MAIN_TIMER >= INDH_PERIOD)
+	 {
+		 INDH_MAIN_TIMER = 0;
+		 if (test_var2 == 100)
+		 {
+			 test_var1 = -10;
+		 }
+		 if (test_var2 == 0)
+		 {
+			 test_var1 = 10;
+		 }
+		 test_var2 += test_var1;
+		 user_pwm_setvalueCH1(test_var2);
+		 user_pwm_setvalueCH2(abs(100-test_var2));
+	 }
+//	 HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
+//	 PCTR_Update_EV_State(adc_data);
+//	 HAL_Delay(500);
   }
   /* USER CODE END 3 */
 }
@@ -231,12 +297,14 @@ static void MX_TIM1_Init(void)
 
   TIM_ClockConfigTypeDef sClockSourceConfig = {0};
   TIM_MasterConfigTypeDef sMasterConfig = {0};
+  TIM_OC_InitTypeDef sConfigOC = {0};
+  TIM_BreakDeadTimeConfigTypeDef sBreakDeadTimeConfig = {0};
 
   /* USER CODE BEGIN TIM1_Init 1 */
 
   /* USER CODE END TIM1_Init 1 */
   htim1.Instance = TIM1;
-  htim1.Init.Prescaler = 0;
+  htim1.Init.Prescaler = 99;
   htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim1.Init.Period = 719;
   htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
@@ -251,15 +319,47 @@ static void MX_TIM1_Init(void)
   {
     Error_Handler();
   }
+  if (HAL_TIM_PWM_Init(&htim1) != HAL_OK)
+  {
+    Error_Handler();
+  }
   sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
   if (HAL_TIMEx_MasterConfigSynchronization(&htim1, &sMasterConfig) != HAL_OK)
   {
     Error_Handler();
   }
+  sConfigOC.OCMode = TIM_OCMODE_PWM1;
+  sConfigOC.Pulse = 0x0;
+  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+  sConfigOC.OCNPolarity = TIM_OCNPOLARITY_HIGH;
+  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+  sConfigOC.OCIdleState = TIM_OCIDLESTATE_RESET;
+  sConfigOC.OCNIdleState = TIM_OCNIDLESTATE_RESET;
+  if (HAL_TIM_PWM_ConfigChannel(&htim1, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sConfigOC.Pulse = 0;
+  if (HAL_TIM_PWM_ConfigChannel(&htim1, &sConfigOC, TIM_CHANNEL_2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sBreakDeadTimeConfig.OffStateRunMode = TIM_OSSR_DISABLE;
+  sBreakDeadTimeConfig.OffStateIDLEMode = TIM_OSSI_DISABLE;
+  sBreakDeadTimeConfig.LockLevel = TIM_LOCKLEVEL_OFF;
+  sBreakDeadTimeConfig.DeadTime = 0;
+  sBreakDeadTimeConfig.BreakState = TIM_BREAK_DISABLE;
+  sBreakDeadTimeConfig.BreakPolarity = TIM_BREAKPOLARITY_HIGH;
+  sBreakDeadTimeConfig.AutomaticOutput = TIM_AUTOMATICOUTPUT_DISABLE;
+  if (HAL_TIMEx_ConfigBreakDeadTime(&htim1, &sBreakDeadTimeConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
   /* USER CODE BEGIN TIM1_Init 2 */
 
   /* USER CODE END TIM1_Init 2 */
+  HAL_TIM_MspPostInit(&htim1);
 
 }
 

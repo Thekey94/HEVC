@@ -82,7 +82,8 @@ PCTR_Return_Type PCTR_Set_Duty_Cycle (uint8_t value)
 void PCTR_PWM_Handller(void)
 {
 
-	if ( (is_PCTR_initialized == PCTR_INITIALIZED) && ( (EV_State == EV_CONNECTED) || (EV_State == EV_CHARGING) ||(EV_State == EV_CHARGING_VENT_REQ)  ))
+	if ( (is_PCTR_initialized == PCTR_INITIALIZED) && ( (EV_State == EV_CONNECTED)
+			|| (EV_State == EV_CHARGING) ||(EV_State == EV_CHARGING_VENT_REQ)  ))
 	{
 		if (PCTR_PWM_Counter <= 100)
 		{
