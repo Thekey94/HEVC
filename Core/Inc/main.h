@@ -47,7 +47,10 @@ extern __IO uint32_t uwTick;
 
 /* Exported macro ------------------------------------------------------------*/
 /* USER CODE BEGIN EM */
-
+#define INDICATOR_PWM_CHANNEL		TIM_CHANNEL_2
+#define PILOT_PWM_CHANNEL			TIM_CHANNEL_1
+#define Set_Indicator_Duty_Value(x)				Set_PWM_Duty_Value(x , INDICATOR_PWM_CHANNEL)
+#define Set_Pilot_Duty_Value(x)					Set_PWM_Duty_Value(x , PILOT_PWM_CHANNEL)
 /* USER CODE END EM */
 
 void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
@@ -56,11 +59,12 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
-
+void Set_PWM_Duty_Value(uint32_t duty_percent ,uint32_t Channel);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
 /* USER CODE BEGIN Private defines */
+#define TIM1_RELOAD_VALUE			719
 
 /* USER CODE END Private defines */
 

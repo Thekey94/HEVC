@@ -22,7 +22,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "Pilot_Cntr.h"
+#include "EVCH.h"
+#include "INDH.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -33,6 +34,11 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 #define INDH_PERIOD		100
+#define INDH_OFFSET		0
+#define EVCH_PERIOD		100
+#define EVCH_OFFSET		10
+#define ADC_PERIOD		100
+#define ADC_OFFSET		50
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -49,7 +55,11 @@ TIM_HandleTypeDef htim1;
 /* USER CODE BEGIN PV */
 uint16_t adc_data[1];
 
-volatile uint16_t INDH_MAIN_TIMER = 0;
+volatile uint16_t INDH_MAIN_TIMER = INDH_OFFSET;
+volatile uint16_t EVCH_MAIN_TIMER = EVCH_OFFSET;
+volatile uint16_t ADC_UPDATE_TIMER = ADC_OFFSET;
+
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -65,12 +75,12 @@ static void MX_ADC1_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void user_pwm_setvalueCH1(uint32_t duty_percent)
+void Set_PWM_Duty_Value(uint32_t duty_percent ,uint32_t Channel)
 {
     TIM_OC_InitTypeDef sConfigOC;
     uint32_t value;
-    value = (719 * duty_percent) / 100;
-    HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_1);
+    value = (TIM1_RELOAD_VALUE * duty_percent) / 100;
+    HAL_TIM_PWM_Stop(&htim1, Channel);
     sConfigOC.OCMode = TIM_OCMODE_PWM1;
     sConfigOC.Pulse = value;
     sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
@@ -78,35 +88,19 @@ void user_pwm_setvalueCH1(uint32_t duty_percent)
     sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
     sConfigOC.OCIdleState = TIM_OCIDLESTATE_RESET;
     sConfigOC.OCNIdleState = TIM_OCNIDLESTATE_RESET;
-    if (HAL_TIM_PWM_ConfigChannel(&htim1, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
-    {
-      Error_Handler();
-    }
-    HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
-}
-void user_pwm_setvalueCH2(uint32_t duty_percent)
-{
-    TIM_OC_InitTypeDef sConfigOC;
-    uint32_t value;
-    value = (719 * duty_percent) / 100;
-    HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_2);
-    sConfigOC.OCMode = TIM_OCMODE_PWM1;
-    sConfigOC.Pulse = value;
-    sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
-    sConfigOC.OCNPolarity = TIM_OCNPOLARITY_HIGH;
-    sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
-    sConfigOC.OCIdleState = TIM_OCIDLESTATE_RESET;
-    sConfigOC.OCNIdleState = TIM_OCNIDLESTATE_RESET;
-    if (HAL_TIM_PWM_ConfigChannel(&htim1, &sConfigOC, TIM_CHANNEL_2) != HAL_OK)
+    if (HAL_TIM_PWM_ConfigChannel(&htim1, &sConfigOC, Channel ) != HAL_OK)
     {
       Error_Handler();
     }
     HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
 }
 
+/*
+ * ISR fired when TIMER complete its cycle
+ * */
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-
+	__NOP();
 }
 
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
@@ -118,7 +112,8 @@ void HAL_IncTick(void)
 {
 	uwTick += uwTickFreq;
 	INDH_MAIN_TIMER += uwTickFreq;
-
+	EVCH_MAIN_TIMER += uwTickFreq;
+	ADC_UPDATE_TIMER += uwTickFreq;
 }
 /* USER CODE END 0 */
 
@@ -154,12 +149,12 @@ int main(void)
   MX_DMA_Init();
   MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
-  PCTR_init();
+  EVCH_init();
   HAL_TIM_Base_Start(&htim1);
   HAL_ADC_Start_DMA(&hadc1,(uint32_t*)adc_data,1);
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
-  uint8_t test_var1;
-  uint8_t test_var2;
+
+  INDH_Set_Indication_type(IND_FADE);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -169,26 +164,24 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-//	 HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
-	 HAL_Delay(100);
+
 	 if (INDH_MAIN_TIMER >= INDH_PERIOD)
 	 {
 		 INDH_MAIN_TIMER = 0;
-		 if (test_var2 == 100)
-		 {
-			 test_var1 = -10;
-		 }
-		 if (test_var2 == 0)
-		 {
-			 test_var1 = 10;
-		 }
-		 test_var2 += test_var1;
-		 user_pwm_setvalueCH1(test_var2);
-		 user_pwm_setvalueCH2(abs(100-test_var2));
+		 INDH_MainFunction();
 	 }
-//	 HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
-//	 PCTR_Update_EV_State(adc_data);
-//	 HAL_Delay(500);
+	 if (EVCH_MAIN_TIMER >= EVCH_PERIOD)
+	 {
+		 EVCH_MAIN_TIMER = 0;
+		 HAL_ADC_Start_DMA(&hadc1,(uint32_t*)adc_data,1);
+		 EVCH_MainFunction();
+	 }
+	 if (ADC_UPDATE_TIMER >= ADC_PERIOD)
+	 {
+		 ADC_UPDATE_TIMER = 0;
+		 HAL_ADC_Start_DMA(&hadc1,(uint32_t*)adc_data,1);
+	 }
+
   }
   /* USER CODE END 3 */
 }

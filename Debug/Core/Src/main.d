@@ -25,7 +25,8 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h \
- ../Core/Inc/std_types.h ../Core/Inc/Pilot_Cntr.h
+ ../Core/Inc/std_types.h ../Core/Inc/EVCH.h ../Core/Inc/INDH.h \
+ ../Core/Inc/std_types.h
 
 ../Core/Inc/main.h:
 
@@ -83,4 +84,8 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 
 ../Core/Inc/std_types.h:
 
-../Core/Inc/Pilot_Cntr.h:
+../Core/Inc/EVCH.h:
+
+../Core/Inc/INDH.h:
+
+../Core/Inc/std_types.h:
