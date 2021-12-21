@@ -39,7 +39,7 @@ void EVCH_Update_EV_State(uint16_t* AdcData)
 	else if(voltage >= MIN_CONNECTED_VOLTAGE )
 	{
 		EV_State = EV_CONNECTED;
-		INDH_Set_Indication_type(IND_ON);
+		INDH_Set_Indication_type(IND_HEART_BEAT);
 	}
 	else if(voltage >= MIN_CHARGING_VOLTAGE )
 	{

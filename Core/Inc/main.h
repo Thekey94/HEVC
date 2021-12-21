@@ -29,7 +29,7 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f1xx_hal.h"
-#include "std_types.h"
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -63,6 +63,36 @@ void Set_PWM_Duty_Value(uint32_t duty_percent ,uint32_t Channel);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define RELAY_1_Pin GPIO_PIN_4
+#define RELAY_1_GPIO_Port GPIOA
+#define RELAY_2_Pin GPIO_PIN_5
+#define RELAY_2_GPIO_Port GPIOA
+#define EM_LOCK_Pin GPIO_PIN_1
+#define EM_LOCK_GPIO_Port GPIOB
+#define EM_LOCKB2_Pin GPIO_PIN_2
+#define EM_LOCKB2_GPIO_Port GPIOB
+#define WIFI_BOOT_Pin GPIO_PIN_14
+#define WIFI_BOOT_GPIO_Port GPIOB
+#define WIFI_RST_Pin GPIO_PIN_15
+#define WIFI_RST_GPIO_Port GPIOB
+#define LED_DIN_Pin GPIO_PIN_12
+#define LED_DIN_GPIO_Port GPIOA
+#define AC_Integrity_INT_Pin GPIO_PIN_15
+#define AC_Integrity_INT_GPIO_Port GPIOA
+#define EM_LOCKB3_Pin GPIO_PIN_3
+#define EM_LOCKB3_GPIO_Port GPIOB
+#define DC_Integ_Pin GPIO_PIN_4
+#define DC_Integ_GPIO_Port GPIOB
+#define AC_INTEG_Pin GPIO_PIN_5
+#define AC_INTEG_GPIO_Port GPIOB
+#define AC_INTEGB6_Pin GPIO_PIN_6
+#define AC_INTEGB6_GPIO_Port GPIOB
+#define AC_INTEGB7_Pin GPIO_PIN_7
+#define AC_INTEGB7_GPIO_Port GPIOB
+#define AC_INTEGB8_Pin GPIO_PIN_8
+#define AC_INTEGB8_GPIO_Port GPIOB
+#define AC_INTEGB9_Pin GPIO_PIN_9
+#define AC_INTEGB9_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 #define TIM1_RELOAD_VALUE			719
 

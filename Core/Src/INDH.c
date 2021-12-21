@@ -74,7 +74,63 @@ std_ret INDH_MainFunction(void)
 
 	case IND_HEART_BEAT :
 		//to do implement hear beat sequence
-		Set_Indicator_Duty_Value(0);
+		local_ind_counter += local_ind_step;
+
+		switch(local_ind_counter)
+
+		{
+		case 0:
+			Set_Indicator_Duty_Value(25);
+			break;
+		case 10:
+			Set_Indicator_Duty_Value(50);
+			break;
+
+		case 20:
+			Set_Indicator_Duty_Value(100);
+			break;
+
+		case 40:
+			Set_Indicator_Duty_Value(50);
+			break;
+		case 50:
+			Set_Indicator_Duty_Value(0);
+			break;
+
+		case 60:
+			Set_Indicator_Duty_Value(50);
+			break;
+
+		case 70:
+			Set_Indicator_Duty_Value(100);
+			break;
+
+		case 80:
+			Set_Indicator_Duty_Value(75);
+			break;
+
+		case 90:
+			Set_Indicator_Duty_Value(50);
+			break;
+
+		case 100:
+			Set_Indicator_Duty_Value(25);
+			break;
+
+		case 110:
+			Set_Indicator_Duty_Value(0);
+			break;
+
+		case 180:
+			local_ind_counter = 0;
+			break;
+
+		default:
+			//do nothing
+			break;
+
+		}
+
 		break;
 
 	default :
